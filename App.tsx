@@ -2,25 +2,21 @@ import React, { useState, useCallback } from 'react';
 import Header from './components/Header';
 import MonsterGrid from './components/MonsterGrid';
 import MonsterDetailModal from './components/MonsterDetailModal';
+import GenerationModal from './components/GenerationModal';
 import { useMonsterStore } from './hooks/useMonsterStore';
 import { generateMonsterDetails } from './services/geminiService';
-import { TEXTURES, HABITATS, CHARACTERS } from './constants';
-import { type Monster, GenerationStatus } from './types';
+import { type Monster, type GenerationCriteria, GenerationStatus } from './types';
 
 const App: React.FC = () => {
   const { monsters, addMonster, updateMonster, removeMonster } = useMonsterStore();
   const [selectedMonsterId, setSelectedMonsterId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerationModalOpen, setIsGenerationModalOpen] = useState(false);
 
-  const handleGenerateMonster = useCallback(async () => {
+  const handleGenerateMonster = useCallback(async (criteria: GenerationCriteria) => {
     setIsGenerating(true);
+    setIsGenerationModalOpen(false);
 
-    const getRandomItem = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
-    const textures: [string, string] = [getRandomItem(TEXTURES), getRandomItem(TEXTURES)];
-    const habitat = getRandomItem(HABITATS);
-    const character = getRandomItem(CHARACTERS);
-
-    const criteria = { textures, habitat, character };
     const tempId = crypto.randomUUID();
 
     const placeholderMonster: Monster = {
@@ -90,10 +86,19 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 font-sans">
-      <Header onGenerate={handleGenerateMonster} onExport={handleExport} isGenerating={isGenerating} />
+      <Header onGenerate={() => setIsGenerationModalOpen(true)} onExport={handleExport} isGenerating={isGenerating} />
       <main className="container mx-auto px-4 py-8">
         <MonsterGrid monsters={monsters} onSelectMonster={setSelectedMonsterId} />
       </main>
+      
+      {isGenerationModalOpen && (
+        <GenerationModal
+            isOpen={isGenerationModalOpen}
+            onClose={() => setIsGenerationModalOpen(false)}
+            onSubmit={handleGenerateMonster}
+        />
+      )}
+
       {selectedMonster && (
         <MonsterDetailModal
           monster={selectedMonster}

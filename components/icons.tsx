@@ -54,3 +54,11 @@ export const ScissorsIcon: React.FC<{ className?: string }> = (props) => (
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 100-6 3 3 0 000 6z" />
     </svg>
 );
+
+export const DiceIcon: React.FC<{ className?: string }> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 9.563C9 9.254 9.254 9 9.563 9h4.874c.31 0 .563.254.563.563v4.874c0 .31-.254.563-.563.563H9.563C9.254 15 9 14.746 9 14.437V9.563z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 7.5h.01v.01H7.5V7.5zM16.5 7.5h.01v.01H16.5V7.5zM7.5 16.5h.01v.01H7.5v-.01zM16.5 16.5h.01v.01H16.5v-.01z" />
+    </svg>
+);
