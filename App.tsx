@@ -27,6 +27,7 @@ const App: React.FC = () => {
     const placeholderMonster: Monster = {
       id: tempId,
       name: 'Generating...',
+      shortDescription: 'Summoning from the aether...',
       description: '',
       visualDescription: '',
       criteria,
@@ -42,6 +43,7 @@ const App: React.FC = () => {
       const newMonster: Monster = {
         ...placeholderMonster,
         name: details.name,
+        shortDescription: details.shortDescription,
         description: details.description,
         visualDescription: details.visualDescription,
         textGenerationStatus: GenerationStatus.SUCCESS,
@@ -49,17 +51,35 @@ const App: React.FC = () => {
       updateMonster(tempId, newMonster);
     } catch (error) {
       console.error("Failed to generate monster details:", error);
-      updateMonster(tempId, { ...placeholderMonster, name: 'Generation Failed', textGenerationStatus: GenerationStatus.ERROR });
+      updateMonster(tempId, { ...placeholderMonster, name: 'Generation Failed', shortDescription: 'The ritual failed.', textGenerationStatus: GenerationStatus.ERROR });
     } finally {
       setIsGenerating(false);
     }
   }, [addMonster, updateMonster]);
   
+  const handleExport = useCallback(() => {
+    if (monsters.length === 0) {
+        alert("Your beastiary is empty. Nothing to export.");
+        return;
+    }
+    const dataStr = JSON.stringify(monsters, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+
+    const exportFileDefaultName = 'beastiary_export.json';
+
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    document.body.appendChild(linkElement);
+    linkElement.click();
+    document.body.removeChild(linkElement);
+  }, [monsters]);
+
   const selectedMonster = monsters.find(m => m.id === selectedMonsterId);
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 font-sans">
-      <Header onGenerate={handleGenerateMonster} isGenerating={isGenerating} />
+      <Header onGenerate={handleGenerateMonster} onExport={handleExport} isGenerating={isGenerating} />
       <main className="container mx-auto px-4 py-8">
         <MonsterGrid monsters={monsters} onSelectMonster={setSelectedMonsterId} />
       </main>

@@ -65,8 +65,8 @@ const MonsterDetailModal: React.FC<MonsterDetailModalProps> = ({ monster, onClos
         <header className="p-4 flex justify-between items-center border-b border-gray-700">
           <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">{monster.name}</h2>
           <div className="flex items-center gap-2">
-            <button onClick={handleDelete} className="text-gray-400 hover:text-red-500 transition-colors"><TrashIcon className="w-6 h-6"/></button>
-            <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors"><CloseIcon className="w-7 h-7"/></button>
+            <button onClick={handleDelete} className="text-gray-400 hover:text-red-500 transition-colors" aria-label="Delete monster"><TrashIcon className="w-6 h-6"/></button>
+            <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors" aria-label="Close modal"><CloseIcon className="w-7 h-7"/></button>
           </div>
         </header>
         
@@ -78,7 +78,11 @@ const MonsterDetailModal: React.FC<MonsterDetailModalProps> = ({ monster, onClos
               <input type="text" value={editableMonster.name} onChange={e => handleFieldChange('name', e.target.value)} className="w-full bg-gray-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"/>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">Description</label>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Short Description</label>
+              <textarea value={editableMonster.shortDescription} onChange={e => handleFieldChange('shortDescription', e.target.value)} rows={3} className="w-full bg-gray-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Full Description</label>
               <textarea value={editableMonster.description} onChange={e => handleFieldChange('description', e.target.value)} rows={6} className="w-full bg-gray-700 rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"/>
             </div>
             <div>

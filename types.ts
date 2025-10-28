@@ -19,6 +19,7 @@ export enum GenerationStatus {
 export interface Monster {
   id: string;
   name: string;
+  shortDescription: string;
   description: string;
   visualDescription: string;
   criteria: GenerationCriteria;

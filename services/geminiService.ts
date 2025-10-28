@@ -10,6 +10,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
 interface MonsterDetails {
     name: string;
+    shortDescription: string;
     description: string;
     visualDescription: string;
 }
@@ -38,6 +39,10 @@ export const generateMonsterDetails = async (criteria: GenerationCriteria): Prom
                             type: Type.STRING,
                             description: "A unique and fitting name for the monster."
                         },
+                        shortDescription: {
+                            type: Type.STRING,
+                            description: "A short, one-sentence summary of the monster, suitable for a card display."
+                        },
                         description: {
                             type: Type.STRING,
                             description: "A 2-3 paragraph description of its lore, behavior, and role in its habitat."
@@ -47,7 +52,7 @@ export const generateMonsterDetails = async (criteria: GenerationCriteria): Prom
                             description: "A detailed paragraph focusing on its physical appearance, suitable for an AI image generator. Describe its form, colors, and textures vividly."
                         }
                     },
-                    required: ["name", "description", "visualDescription"]
+                    required: ["name", "shortDescription", "description", "visualDescription"]
                 },
                 temperature: 0.9,
             },
@@ -70,7 +75,7 @@ export const generateMonsterImages = async (visualDescription: string): Promise<
             config: {
                 numberOfImages: 4,
                 outputMimeType: 'image/jpeg',
-                aspectRatio: '1:1',
+                aspectRatio: '2:3',
             },
         });
         

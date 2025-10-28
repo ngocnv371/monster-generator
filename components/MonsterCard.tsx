@@ -19,7 +19,7 @@ const MonsterCard: React.FC<MonsterCardProps> = ({ monster, onSelect }) => {
   return (
     <div
       onClick={onSelect}
-      className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/40 transition-shadow duration-300 transform hover:-translate-y-1 cursor-pointer group"
+      className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/40 transition-shadow duration-300 transform hover:-translate-y-1 cursor-pointer group flex flex-col"
     >
       <div className="relative aspect-square w-full bg-gray-700">
         {isPending ? (
@@ -35,8 +35,9 @@ const MonsterCard: React.FC<MonsterCardProps> = ({ monster, onSelect }) => {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
       </div>
-      <div className="p-4">
+      <div className="p-4 flex-grow">
         <h3 className="text-lg font-bold truncate text-white">{monster.name}</h3>
+        <p className="text-sm text-gray-400 mt-1 h-10 overflow-hidden text-ellipsis">{monster.shortDescription}</p>
       </div>
     </div>
   );
