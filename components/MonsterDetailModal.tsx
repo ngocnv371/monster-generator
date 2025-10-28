@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { type Monster, GenerationStatus } from '../types';
 import { generateMonsterImages } from '../services/geminiService';
+import { generateImagesWithComfyUI } from '../services/comfyuiService';
 import { CloseIcon, SaveIcon, TrashIcon, ImageIcon, CheckCircleIcon, ScissorsIcon } from './icons';
 import Spinner from './Spinner';
-import { RARITIES } from '../constants';
+import { RARITIES, COMFYUI_URL } from '../constants';
 import ConfirmModal from './ConfirmModal';
 
 
@@ -12,6 +13,7 @@ interface MonsterDetailModalProps {
   onClose: () => void;
   onUpdate: (id: string, data: Partial<Monster>) => void;
   onDelete: (id: string) => void;
+  imageGenerator: 'gemini' | 'comfyui';
 }
 
 interface ConfirmState {
@@ -21,7 +23,7 @@ interface ConfirmState {
     onConfirm: () => void;
 }
 
-const MonsterDetailModal: React.FC<MonsterDetailModalProps> = ({ monster, onClose, onUpdate, onDelete }) => {
+const MonsterDetailModal: React.FC<MonsterDetailModalProps> = ({ monster, onClose, onUpdate, onDelete, imageGenerator }) => {
   const [editableMonster, setEditableMonster] = useState(monster);
   const [isGeneratingImages, setIsGeneratingImages] = useState(false);
   const [confirmState, setConfirmState] = useState<ConfirmState>({
@@ -68,7 +70,14 @@ const MonsterDetailModal: React.FC<MonsterDetailModalProps> = ({ monster, onClos
     setIsGeneratingImages(true);
     onUpdate(monster.id, { imageGenerationStatus: GenerationStatus.PENDING });
     try {
-      const imageBytesArray = await generateMonsterImages(monster.visualDescription);
+      let imageBytesArray: string[];
+
+      if (imageGenerator === 'comfyui') {
+        imageBytesArray = await generateImagesWithComfyUI(monster.visualDescription);
+      } else {
+        imageBytesArray = await generateMonsterImages(monster.visualDescription);
+      }
+      
       const newImages = imageBytesArray.map(base64 => ({ base64 }));
       onUpdate(monster.id, { 
         images: newImages, 
@@ -161,10 +170,20 @@ const MonsterDetailModal: React.FC<MonsterDetailModalProps> = ({ monster, onClos
             
             {/* Right Column: Images */}
             <div className="flex flex-col gap-4">
-              <button onClick={handleGenerateImages} disabled={isGeneratingImages || monster.textGenerationStatus !== GenerationStatus.SUCCESS} className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-900 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center transition-colors">
-                {isGeneratingImages ? <Spinner className="w-5 h-5 mr-2"/> : <ImageIcon className="w-5 h-5 mr-2" />}
-                {isGeneratingImages ? 'Generating Images...' : 'Generate Images'}
-              </button>
+                <button 
+                    onClick={handleGenerateImages} 
+                    disabled={isGeneratingImages || monster.textGenerationStatus !== GenerationStatus.SUCCESS} 
+                    className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-900 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center transition-colors"
+                >
+                    {isGeneratingImages ? <Spinner className="w-5 h-5 mr-2"/> : <ImageIcon className="w-5 h-5 mr-2" />}
+                    {isGeneratingImages ? 'Generating...' : `Generate Images (${imageGenerator === 'gemini' ? 'Gemini' : 'ComfyUI'})`}
+                </button>
+
+                {imageGenerator === 'comfyui' && (
+                    <p className="text-xs text-center text-gray-500 -mt-2">
+                        Ensure ComfyUI is running at: <code className="bg-gray-900 px-1 rounded">{COMFYUI_URL}</code>
+                    </p>
+                )}
               
               {monster.images.length > 1 && monster.primaryImageIndex !== null && (
                   <button onClick={handleRemoveNonPrimaryImages} className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center transition-colors">

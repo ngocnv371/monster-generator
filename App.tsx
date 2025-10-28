@@ -12,6 +12,7 @@ const App: React.FC = () => {
   const [selectedMonsterId, setSelectedMonsterId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGenerationModalOpen, setIsGenerationModalOpen] = useState(false);
+  const [imageGenerator, setImageGenerator] = useState<'gemini' | 'comfyui'>('gemini');
 
   const handleGenerateMonster = useCallback(async (criteria: GenerationCriteria) => {
     setIsGenerating(true);
@@ -86,7 +87,13 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 font-sans">
-      <Header onGenerate={() => setIsGenerationModalOpen(true)} onExport={handleExport} isGenerating={isGenerating} />
+      <Header 
+        onGenerate={() => setIsGenerationModalOpen(true)} 
+        onExport={handleExport} 
+        isGenerating={isGenerating}
+        imageGenerator={imageGenerator}
+        onImageGeneratorChange={setImageGenerator}
+      />
       <main className="container mx-auto px-4 py-8">
         <MonsterGrid monsters={monsters} onSelectMonster={setSelectedMonsterId} />
       </main>
@@ -105,6 +112,7 @@ const App: React.FC = () => {
           onClose={() => setSelectedMonsterId(null)}
           onUpdate={updateMonster}
           onDelete={removeMonster}
+          imageGenerator={imageGenerator}
         />
       )}
     </div>
