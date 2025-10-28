@@ -19,10 +19,10 @@ const rarityColorMap: { [key: string]: string } = {
 
 
 const MonsterCard: React.FC<MonsterCardProps> = ({ monster, onSelect }) => {
-  const primaryImage =
+  const primaryImageSrc =
     monster.primaryImageIndex !== null && monster.images[monster.primaryImageIndex]
       ? `data:image/jpeg;base64,${monster.images[monster.primaryImageIndex].base64}`
-      : `https://picsum.photos/seed/${monster.id}/300/400`;
+      : null;
 
   const isPending = monster.textGenerationStatus === GenerationStatus.PENDING;
 
@@ -36,12 +36,16 @@ const MonsterCard: React.FC<MonsterCardProps> = ({ monster, onSelect }) => {
           <div className="w-full h-full flex items-center justify-center">
             <Spinner className="w-10 h-10 text-purple-400" />
           </div>
-        ) : (
+        ) : primaryImageSrc ? (
           <img
-            src={primaryImage}
+            src={primaryImageSrc}
             alt={monster.name}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
+        ) : (
+           <div className="w-full h-full flex items-center justify-center text-gray-500 italic">
+            No Image
+          </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
       </div>
