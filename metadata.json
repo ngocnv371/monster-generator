@@ -1,0 +1,5 @@
+{
+  "name": "AI Beastiary Generator",
+  "description": "A web application to generate and curate a collection of unique monsters using AI. Define creatures by their habitat, role, and texture, then bring them to life with generated descriptions and images.",
+  "requestFramePermissions": []
+}
