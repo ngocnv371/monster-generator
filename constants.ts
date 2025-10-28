@@ -1,4 +1,3 @@
-
 export const TEXTURES: string[] = [
   "rough", "smooth", "slimy", "furry", "scaled", "metallic", "crystalline",
   "gaseous", "liquid", "origami", "ethereal", "shadowy", "luminescent", "brittle",
@@ -16,5 +15,7 @@ export const CHARACTERS: string[] = [
   "symbiote", "parasite", "queen", "worker", "builder", "destroyer", "explorer",
   "oracle", "mimic", "shaman", "warrior"
 ];
+
+export const RARITIES = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythical'] as const;
 
 export const ITEMS_PER_PAGE = 12;

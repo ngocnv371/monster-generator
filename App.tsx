@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import Header from './components/Header';
 import MonsterGrid from './components/MonsterGrid';
@@ -35,6 +34,9 @@ const App: React.FC = () => {
       primaryImageIndex: null,
       textGenerationStatus: GenerationStatus.PENDING,
       imageGenerationStatus: GenerationStatus.IDLE,
+      rarity: 'Pending...',
+      attack: 0,
+      defense: 0,
     };
     addMonster(placeholderMonster);
 
@@ -46,12 +48,21 @@ const App: React.FC = () => {
         shortDescription: details.shortDescription,
         description: details.description,
         visualDescription: details.visualDescription,
+        rarity: details.rarity,
+        attack: details.attack,
+        defense: details.defense,
         textGenerationStatus: GenerationStatus.SUCCESS,
       };
       updateMonster(tempId, newMonster);
     } catch (error) {
       console.error("Failed to generate monster details:", error);
-      updateMonster(tempId, { ...placeholderMonster, name: 'Generation Failed', shortDescription: 'The ritual failed.', textGenerationStatus: GenerationStatus.ERROR });
+      updateMonster(tempId, { 
+        ...placeholderMonster, 
+        name: 'Generation Failed', 
+        shortDescription: 'The ritual failed.', 
+        textGenerationStatus: GenerationStatus.ERROR,
+        rarity: 'Unknown',
+      });
     } finally {
       setIsGenerating(false);
     }

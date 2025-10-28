@@ -1,6 +1,5 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
-import { type GenerationCriteria } from '../types';
+import { type GenerationCriteria, type Rarity } from '../types';
 
 if (!process.env.API_KEY) {
     console.warn("API_KEY environment variable not set. Please set it in your environment.");
@@ -13,6 +12,9 @@ interface MonsterDetails {
     shortDescription: string;
     description: string;
     visualDescription: string;
+    rarity: Rarity;
+    attack: number;
+    defense: number;
 }
 
 export const generateMonsterDetails = async (criteria: GenerationCriteria): Promise<MonsterDetails> => {
@@ -24,6 +26,7 @@ export const generateMonsterDetails = async (criteria: GenerationCriteria): Prom
     - Fulfills the role of a '${criteria.character}'.
     
     Please provide a response in JSON format.
+    The monster should have a rarity ('Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythical'), and attack/defense ratings from 1 to 5.
     `;
 
     try {
@@ -50,9 +53,21 @@ export const generateMonsterDetails = async (criteria: GenerationCriteria): Prom
                         visualDescription: {
                             type: Type.STRING,
                             description: "A detailed paragraph focusing on its physical appearance, suitable for an AI image generator. Describe its form, colors, and textures vividly."
+                        },
+                        rarity: {
+                            type: Type.STRING,
+                            description: "The monster's rarity level. Must be one of: 'Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythical'."
+                        },
+                        attack: {
+                            type: Type.INTEGER,
+                            description: "An integer rating for attack strength, from 1 to 5."
+                        },
+                        defense: {
+                            type: Type.INTEGER,
+                            description: "An integer rating for defense strength, from 1 to 5."
                         }
                     },
-                    required: ["name", "shortDescription", "description", "visualDescription"]
+                    required: ["name", "shortDescription", "description", "visualDescription", "rarity", "attack", "defense"]
                 },
                 temperature: 0.9,
             },

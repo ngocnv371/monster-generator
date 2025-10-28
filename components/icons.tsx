@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export const SparklesIcon: React.FC<{ className?: string }> = (props) => (
@@ -47,4 +46,11 @@ export const ExportIcon: React.FC<{ className?: string }> = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
   </svg>
+);
+
+export const ScissorsIcon: React.FC<{ className?: string }> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M7.848 8.25l1.536 1.536m-1.536-1.536l-1.536 1.536m1.536-1.536H3.75m4.098 0L9 9.75m-1.152-1.5L6.3 6.69m1.548 1.559l-1.44-1.439m11.494 11.494l-1.536-1.536m1.536 1.536l1.536-1.536m-1.536 1.536v4.098m0-4.098l-1.5-1.5m1.5 1.5l1.571-1.571m-4.5-4.5l-1.536 1.536m1.536-1.536l1.536 1.536m-1.536-1.536H20.25m-4.098 0L15 14.25m1.152 1.5l1.548 1.559m-1.548-1.559l1.44 1.439M9 12a3 3 0 100-6 3 3 0 000 6z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 100-6 3 3 0 000 6z" />
+    </svg>
 );

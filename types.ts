@@ -1,3 +1,4 @@
+import { type RARITIES } from './constants';
 
 export interface MonsterImage {
   base64: string;
@@ -16,6 +17,8 @@ export enum GenerationStatus {
   ERROR,
 }
 
+export type Rarity = typeof RARITIES[number];
+
 export interface Monster {
   id: string;
   name: string;
@@ -27,4 +30,7 @@ export interface Monster {
   primaryImageIndex: number | null;
   textGenerationStatus: GenerationStatus;
   imageGenerationStatus: GenerationStatus;
+  rarity: Rarity | string; // Allow string for "Generating..." state
+  attack: number;
+  defense: number;
 }
