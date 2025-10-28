@@ -75,7 +75,7 @@ export const generateMonsterImages = async (visualDescription: string): Promise<
             config: {
                 numberOfImages: 4,
                 outputMimeType: 'image/jpeg',
-                aspectRatio: '2:3',
+                aspectRatio: '3:4',
             },
         });
         

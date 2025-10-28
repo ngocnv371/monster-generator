@@ -12,7 +12,7 @@ const MonsterCard: React.FC<MonsterCardProps> = ({ monster, onSelect }) => {
   const primaryImage =
     monster.primaryImageIndex !== null && monster.images[monster.primaryImageIndex]
       ? `data:image/jpeg;base64,${monster.images[monster.primaryImageIndex].base64}`
-      : `https://picsum.photos/seed/${monster.id}/500/500`;
+      : `https://picsum.photos/seed/${monster.id}/300/400`;
 
   const isPending = monster.textGenerationStatus === GenerationStatus.PENDING;
 
