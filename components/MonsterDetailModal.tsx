@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { type Monster, GenerationStatus } from '../types';
 import { generateMonsterImages } from '../services/geminiService';
 import { generateImagesWithComfyUI } from '../services/comfyuiService';
+import { supabase } from '../services/supabaseClient';
 import { CloseIcon, SaveIcon, TrashIcon, ImageIcon, CheckCircleIcon, ScissorsIcon } from './icons';
 import Spinner from './Spinner';
 import { RARITIES, COMFYUI_URL } from '../constants';
@@ -78,14 +80,41 @@ const MonsterDetailModal: React.FC<MonsterDetailModalProps> = ({ monster, onClos
         imageBytesArray = await generateMonsterImages(monster.visualDescription);
       }
       
-      const newImages = imageBytesArray.map(base64 => ({ base64 }));
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("User not authenticated for image upload.");
+      }
+
+      // Upload images to Supabase Storage and get public URLs
+      const uploadPromises = imageBytesArray.map(async (base64) => {
+        const blob = await fetch(`data:image/jpeg;base64,${base64}`).then(res => res.blob());
+        const filePath = `${user.id}/${monster.id}/${Date.now()}.jpeg`;
+        
+        const { error: uploadError } = await supabase.storage
+            .from('monster-images')
+            .upload(filePath, blob, { contentType: 'image/jpeg' });
+            
+        if (uploadError) {
+            console.error("Supabase upload error:", uploadError);
+            throw uploadError;
+        }
+        
+        const { data } = supabase.storage
+            .from('monster-images')
+            .getPublicUrl(filePath);
+            
+        return data.publicUrl;
+      });
+
+      const newImageUrls = await Promise.all(uploadPromises);
+
       onUpdate(monster.id, { 
-        images: newImages, 
+        images: newImageUrls, 
         primaryImageIndex: 0,
         imageGenerationStatus: GenerationStatus.SUCCESS
       });
     } catch (error) {
-      console.error("Failed to generate images", error);
+      console.error("Failed to generate and upload images", error);
       onUpdate(monster.id, { imageGenerationStatus: GenerationStatus.ERROR });
     } finally {
       setIsGeneratingImages(false);
@@ -96,14 +125,31 @@ const MonsterDetailModal: React.FC<MonsterDetailModalProps> = ({ monster, onClos
     onUpdate(monster.id, { primaryImageIndex: index });
   };
   
-  const handleRemoveNonPrimaryImages = () => {
+  const handleRemoveNonPrimaryImages = async () => {
     if (monster.primaryImageIndex === null || monster.images.length <= 1) return;
+    
     setConfirmState({
         isOpen: true,
         title: 'Remove Non-Primary Images',
         message: 'Are you sure you want to remove all other images? This cannot be undone.',
-        onConfirm: () => {
+        onConfirm: async () => {
             const primaryImage = monster.images[monster.primaryImageIndex!];
+            const imagesToDelete = monster.images.filter((_, index) => index !== monster.primaryImageIndex);
+            
+            const filePathsToDelete = imagesToDelete.map(url => {
+                 const urlParts = new URL(url);
+                 const pathSegments = urlParts.pathname.split('/');
+                 return pathSegments.slice(pathSegments.indexOf('monster-images') + 1).join('/');
+            });
+            
+            if (filePathsToDelete.length > 0) {
+                 const { error } = await supabase.storage.from('monster-images').remove(filePathsToDelete);
+                 if (error) {
+                     console.error("Error removing images from storage:", error);
+                     alert("Failed to remove some images from storage. Please check the console.");
+                 }
+            }
+            
             onUpdate(monster.id, {
                 images: [primaryImage],
                 primaryImageIndex: 0
@@ -195,9 +241,9 @@ const MonsterDetailModal: React.FC<MonsterDetailModalProps> = ({ monster, onClos
               {monster.imageGenerationStatus === GenerationStatus.ERROR && <p className="text-red-400 text-center">Image generation failed. Please try again.</p>}
 
               <div className="grid grid-cols-2 gap-4">
-                {monster.images.map((image, index) => (
+                {monster.images.map((imageUrl, index) => (
                   <div key={index} className="relative group aspect-square cursor-pointer" onClick={() => setPrimaryImage(index)}>
-                    <img src={`data:image/jpeg;base64,${image.base64}`} alt={`Generated monster image ${index + 1}`} className="w-full h-full object-cover rounded-md" />
+                    <img src={imageUrl} alt={`Generated monster image ${index + 1}`} className="w-full h-full object-cover rounded-md" />
                     {monster.primaryImageIndex === index && (
                       <div className="absolute inset-0 bg-green-500/50 flex items-center justify-center rounded-md">
                         <CheckCircleIcon className="w-12 h-12 text-white" />

@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { type Monster } from '../types';
 import MonsterCard from './MonsterCard';
@@ -8,9 +9,10 @@ import { SearchIcon } from './icons';
 interface MonsterGridProps {
   monsters: Monster[];
   onSelectMonster: (id: string) => void;
+  loading: boolean;
 }
 
-const MonsterGrid: React.FC<MonsterGridProps> = ({ monsters, onSelectMonster }) => {
+const MonsterGrid: React.FC<MonsterGridProps> = ({ monsters, onSelectMonster, loading }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [textureFilter, setTextureFilter] = useState('');
@@ -58,6 +60,13 @@ const MonsterGrid: React.FC<MonsterGridProps> = ({ monsters, onSelectMonster }) 
     return sortedAndFilteredMonsters.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [sortedAndFilteredMonsters, currentPage]);
 
+  if (loading) {
+    return (
+      <div className="text-center py-20">
+        <h2 className="text-2xl text-gray-400">Loading your beastiary...</h2>
+      </div>
+    )
+  }
 
   if (monsters.length === 0) {
     return (

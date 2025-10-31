@@ -31,7 +31,7 @@ export const generateMonsterDetails = async (criteria: GenerationCriteria): Prom
 
     try {
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-pro",
+            model: "gemini-2.5-flash",
             contents: prompt,
             config: {
                 responseMimeType: "application/json",

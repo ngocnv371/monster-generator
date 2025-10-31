@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { type Monster, GenerationStatus } from '../types';
 import Spinner from './Spinner';
@@ -21,7 +22,7 @@ const rarityColorMap: { [key: string]: string } = {
 const MonsterCard: React.FC<MonsterCardProps> = ({ monster, onSelect }) => {
   const primaryImageSrc =
     monster.primaryImageIndex !== null && monster.images[monster.primaryImageIndex]
-      ? `data:image/jpeg;base64,${monster.images[monster.primaryImageIndex].base64}`
+      ? monster.images[monster.primaryImageIndex]
       : null;
 
   const isPending = monster.textGenerationStatus === GenerationStatus.PENDING;
